@@ -37,3 +37,29 @@ LDAP функционирует на 389/tcp без SSL/TLS и 636/tcp с SSL/TL
       --no-forwarders \
       --no-reverse
 ```
+Подключаемся к машине смотрим статус работы служб FreeIPA:
+```
+[root@ipa ~]# ipactl status
+Directory Service: RUNNING
+krb5kdc Service: RUNNING
+kadmin Service: RUNNING
+named Service: RUNNING
+httpd Service: RUNNING
+ipa-custodia Service: RUNNING
+ntpd Service: RUNNING
+pki-tomcatd Service: RUNNING
+ipa-otpd Service: RUNNING
+ipa-dnskeysyncd Service: RUNNING
+ipa: INFO: The ipactl command was successful
+```
+Проверим, получит ли пользователь-администратор токен через Kerberos с помощью команды kinit, используя тот же пароль пользователя-администратора, который мы указали при установке FreeIPA.
+```
+[root@ipa ~]# kinit admin
+Password for admin@YARKOZLOFF.LOCAL:
+[root@ipa ~]# klist
+Ticket cache: KEYRING:persistent:0:0
+Default principal: admin@YARKOZLOFF.LOCAL
+
+Valid starting       Expires              Service principal
+08/27/2022 13:21:32  08/28/2022 13:21:28  krbtgt/YARKOZLOFF.LOCAL@YARKOZLOFF.LOCAL
+```
