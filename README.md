@@ -16,3 +16,24 @@ LDAP (Lightweight Directory Access Protocol) не является проток�
 - своеобразная терминология и сокращения,
 - используется как компонент других систем 
 LDAP функционирует на 389/tcp без SSL/TLS и 636/tcp с SSL/TLS.
+
+Настройка сервера:
+- Используется локальный бокс centos7
+- Устанавливаются необходимые компоненты: nss, ipa-server, ipa-server-dns
+- Конфигурируется firewalld
+- Конфигурируется freeipa:
+```
+- name: Configure freeipa
+    command: |
+      ipa-server-install -U \
+      -r YARKOZLOFF.LOCAL \
+      -n yarkozloff.local \
+      -p 12345678 \
+      -a 12345678 \
+      --hostname=ipa.yarkozloff.local \
+      --ip-address=10.0.2.15 \
+      --mkhomedir \
+      --setup-dns \
+      --no-forwarders \
+      --no-reverse
+```
