@@ -1,0 +1,37 @@
+---
+- name: Play client.local
+  hosts: client.yarkozloff.local
+  become: yes
+  gather_facts: false
+  tasks:
+
+  - name: update yum caсhe
+    yum:
+      update_cache: true 
+      
+  - name: install epel-release
+    yum:
+      state: present
+      name:
+        - epel-release
+
+  - name: Install ipaservers
+    become: yes
+    yum:
+      name: 
+        - bind-utils
+        - ipa-client
+        - realmd
+        - ntp
+        
+  - name: Configure freeipa-client
+    command: |
+      ipa-client-install -U \
+      --principal admin \
+      --password 12345678 \
+      --hostname=client.yarkozloff.local \
+      --mkhomedir \
+      --server=ipa.yarkozloff.local \
+      --domain yarkozloff.local \
+      --realm YARKOZLOFF.LOCAL \
+      --force-ntpd \

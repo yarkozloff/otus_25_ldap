@@ -1,0 +1,48 @@
+---
+- name: Play ipa.yarkozloff.local
+  hosts: ipa.yarkozloff.local
+  become: yes
+  gather_facts: false
+  tasks:
+
+  - name: update yum caсhe
+    yum:
+      update_cache: true 
+      
+  - name: install epel-release
+    yum:
+      state: present
+      name:
+        - epel-release
+      
+  - name: Install nss 
+    become: yes
+    yum:
+      name: nss
+      state: latest
+
+  - name: Install ipaservers
+    become: yes
+    yum:
+      name: 
+        - ipa-server
+        - htop
+        - ipa-server-dns
+        - ntp
+        
+  - name: configure firewalld
+    shell: systemctl start firewalld && systemctl enable firewalld && for SERVICES in ntp http https ldap ldaps kerberos kpasswd dns; do firewall-cmd --permanent --add-service=$SERVICES; done && firewall-cmd --reload
+  
+  - name: Configure freeipa
+    command: |
+      ipa-server-install -U \
+      -r YARKOZLOFF.LOCAL \
+      -n yarkozloff.local \
+      -p 12345678 \
+      -a 12345678 \
+      --hostname=ipa.yarkozloff.local \
+      --ip-address=192.168.10.10 \
+      --mkhomedir \
+      --setup-dns \
+      --no-forwarders \
+      --no-reverse
