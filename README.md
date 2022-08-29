@@ -89,3 +89,44 @@ Default principal: admin@YARKOZLOFF.LOCAL
 Valid starting       Expires              Service principal
 08/29/2022 20:59:01  08/30/2022 20:58:58  krbtgt/YARKOZLOFF.LOCAL@YARKOZLOFF.LOCAL
 ```
+### Добавление пользователей
+На сервере ipa создадим пользователя:
+```
+[root@ipa ~]# kinit admin
+Password for admin@YARKOZLOFF.LOCAL:
+[root@ipa ~]# ipa user-add yar --first=Ярослав --last=Козлов --password
+Password:
+Enter Password again to verify:
+----------------
+Added user "yar"
+----------------
+  User login: yar
+  First name: Ярослав
+  Last name: Козлов
+  Full name: Ярослав Козлов
+  Display name: Ярослав Козлов
+  Initials: ЯК
+  Home directory: /home/yar
+  GECOS: Ярослав Козлов
+  Login shell: /bin/sh
+  Principal name: yar@YARKOZLOFF.LOCAL
+  Principal alias: yar@YARKOZLOFF.LOCAL
+  User password expiration: 20220829180217Z
+  Email address: yar@yarkozloff.local
+  UID: 1962000001
+  GID: 1962000001
+  Password: True
+  Member of groups: ipausers
+  Kerberos keys available: True
+```
+Получим тикет на клиенте:
+```
+[root@client ~]# kinit yar
+Password for yar@YARKOZLOFF.LOCAL:
+[root@client ~]# klist
+Ticket cache: KEYRING:persistent:0:krb_ccache_97L6Frb
+Default principal: yar@YARKOZLOFF.LOCAL
+
+Valid starting       Expires              Service principal
+08/29/2022 21:03:08  08/30/2022 21:03:05  krbtgt/YARKOZLOFF.LOCAL@YARKOZLOFF.LOCAL
+```
