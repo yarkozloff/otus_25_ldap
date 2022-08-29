@@ -63,3 +63,29 @@ Default principal: admin@YARKOZLOFF.LOCAL
 Valid starting       Expires              Service principal
 08/27/2022 13:21:32  08/28/2022 13:21:28  krbtgt/YARKOZLOFF.LOCAL@YARKOZLOFF.LOCAL
 ```
+## Ansible playbook для конфигурации клиента
+Выбирая между хостовой машины или отдельной - мой выбор пал на отдельную клиентскую машину развернутую через vagrant. Для этого потребовался локальный бокс с centos7, установленный пакеты (некоторые потребовались для дебага) - bind-utils, ipa-client, realmd, ntp. Отключить selinux и firewalld. Также добавлена таска для автоматической конфигурации клиента:
+```
+  - name: Configure freeipa-client
+    command: |
+      ipa-client-install -U \
+      --principal admin \
+      --password 12345678 \
+      --hostname=client.yarkozloff.local \
+      --mkhomedir \
+      --server=ipa.yarkozloff.local \
+      --domain yarkozloff.local \
+      --realm YARKOZLOFF.LOCAL \
+      --force-ntpd \
+```
+После поднятия машины провижним её, подключаемся и проверяем получит ли пользователь-администратор токен через Kerberos с помощью команды kinit:
+```
+[root@client ~]# kinit admin
+Password for admin@YARKOZLOFF.LOCAL:
+[root@client ~]# klist
+Ticket cache: KEYRING:persistent:0:0
+Default principal: admin@YARKOZLOFF.LOCAL
+
+Valid starting       Expires              Service principal
+08/29/2022 20:59:01  08/30/2022 20:58:58  krbtgt/YARKOZLOFF.LOCAL@YARKOZLOFF.LOCAL
+```
